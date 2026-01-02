@@ -1,8 +1,8 @@
-import { MongoClient, ObjectId } from "mongodb";
-import * as dotenv from 'dotenv';
+import { MongoClient } from "mongodb";
+import * as dotenv from "dotenv";
 dotenv.config();
-import debug from 'debug';
-const debugDb = debug('app:Database');
+import debug from "debug";
+const debugDb = debug("app:database");
 
 let _db = null;
 
@@ -14,6 +14,7 @@ async function connectToDatabase() {
     const client = await MongoClient.connect(connectionString);
     _db = client.db(dbName);
   }
+  debugDb("Connected to Database");
   return _db;
 }
 
@@ -23,4 +24,22 @@ async function ping() {
   debugDb(`Ping:, ${JSON.stringify(pong)}`);
 }
 
-ping()
+async function GetAllPosts() {
+  const db = await connectToDatabase();
+  const posts = await db.collection("Posts").find().toArray();
+  console.log(posts);
+  return posts;
+}
+
+async function GetPostById(postId) {
+  const db = await connectToDatabase();
+  debugDb(postId);
+  const getPost = await db
+    .collection("Posts")
+    .findOne({ _id: { $eq: postId } });
+  return getPost;
+}
+
+ping();
+
+export { connectToDatabase, ping, GetAllPosts, GetPostById };
