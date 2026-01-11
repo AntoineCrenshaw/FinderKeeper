@@ -1,4 +1,4 @@
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 import * as dotenv from "dotenv";
 dotenv.config();
 import debug from "debug";
@@ -33,13 +33,48 @@ async function GetAllPosts() {
 
 async function GetPostById(postId) {
   const db = await connectToDatabase();
-  debugDb(postId);
-  const getPost = await db
-    .collection("Posts")
-    .findOne({ _id: { $eq: postId } });
+  const getPost = await db.collection("Posts").findOne({ _id: postId });
   return getPost;
+}
+
+async function createPost(post) {
+  const db = await connectToDatabase();
+  const dbResult = await db.collection("Posts").insertOne(post);
+  return dbResult;
+}
+
+async function updatePost(postId, updatedPost) {
+  const db = await connectToDatabase();
+  debugDb(`Updated post: ${JSON.stringify(updatedPost)}`);
+  const dbResult = await db
+    .collection("Posts")
+    .updateOne({ _id: new ObjectId(postId) }, { $set: updatedPost });
+  return dbResult;
+}
+
+async function deletePost(postId) {
+  const db = await connectToDatabase();
+  const dbResult = await db
+    .collection("Posts")
+    .deleteOne({ _id: new ObjectId(postId) });
+  return dbResult;
+}
+
+async function saveAuditLog(log) {
+  const db = await connectToDatabase();
+  const dbResult = await db.collection("AuditLog").instertOne(log);
+  return dbResult;
 }
 
 ping();
 
-export { connectToDatabase, ping, GetAllPosts, GetPostById };
+export {
+  connectToDatabase,
+  ping,
+  GetAllPosts,
+  GetPostById,
+  createPost,
+  updatePost,
+  deletePost,
+  saveAuditLog,
+};
