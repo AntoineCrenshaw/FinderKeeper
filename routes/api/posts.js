@@ -67,7 +67,7 @@ router.post("/new", async (req, res) => {
 });
 
 //update Post
-router.patch("/:postId", async (req, res) => {
+router.patch("/update/:postId", async (req, res) => {
   const postId = req.params.postId;
 
   //New Post data
