@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { getPosts, deletePost } from "../../frontend/src/Services/api";
-import { Link } from "react-router-dom";
+import "../../frontend/components/styling/ListPost.css";
 
 function ListPosts() {
   const [posts, setPosts] = useState([]);
@@ -36,20 +36,37 @@ function ListPosts() {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div>
-      {posts.map((post) => (
-        <div key={post._id}>
-          <h3>{post.title}</h3>
-          <p>{post.location}</p>
-          <a className="btn">
-            <Link to={`/posts/update/${post._id}`}>Edit</Link>
-          </a>
-          <button className="px-3" onClick={() => handleDelete(post._id)}>
-            Delete
-          </button>
-        </div>
-      ))}
-    </div>
+    <>
+      <div className="page-header">
+        <h1>Active Sales</h1>
+      </div>
+      <div className="grid-container">
+        {posts.map((post) => (
+          <div key={post._id} className="card">
+            <img
+              src={post.image || "https://unsplash.it/400/300?random"}
+              alt={post.title}
+              className="card-image"
+            />
+            <div className="card-content">
+              <h3 className="card-title">{post.title}</h3>
+              <p className="card-location">📍 {post.location}</p>
+              <div className="card-actions">
+                <a href={`/posts/update/${post._id}`} className="card-link">
+                  Edit
+                </a>
+                <button
+                  onClick={() => handleDelete(post._id)}
+                  className="card-button"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
   );
 }
 

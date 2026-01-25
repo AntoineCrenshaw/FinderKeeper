@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getPostById, updatePost } from "../../frontend/src/Services/api";
 import { useParams, useNavigate } from "react-router-dom";
+import "../../frontend/components/styling/EditPost.css";
 
 function EditPost() {
   const { id } = useParams();
@@ -39,6 +40,9 @@ function EditPost() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    console.log("Submitting update for post ID:", id);
+    console.log("Data:", { title, location });
+
     if (!title.trim() || !location.trim()) {
       setError("Both title and location are required");
       return;
@@ -49,97 +53,44 @@ function EditPost() {
       setError(null);
       setSuccess(false);
 
-      await updatePost(id, { title, location });
+      const result = await updatePost(id, { title, location });
+      console.log("Update result:", result);
 
       setSuccess(true);
-
       // Navigate back after a short delay
       setTimeout(() => {
         navigate("/");
       }, 1500);
     } catch (err) {
-      console.error("Error updating post:", err);
-      setError(err?.response?.data?.message || "Failed to update post");
+      console.error("Full error object:", err);
+      console.error("Error response:", err.response);
+      console.error("Error config:", err.config); // This shows the actual URL being called
+      const errorMessage =
+        err?.response?.data?.message ||
+        err?.response?.data?.error ||
+        err?.message ||
+        "Failed to update post";
+
+      setError(errorMessage);
     } finally {
       setSaving(false);
     }
   };
 
   if (loading) {
-    return (
-      <div
-        style={{
-          maxWidth: "1200px",
-          margin: "20px auto",
-          padding: "20px",
-          textAlign: "center",
-        }}
-      >
-        Loading post...
-      </div>
-    );
+    return <div className="loading-style">Loading post...</div>;
   }
 
   if (error && !title && !location) {
-    return (
-      <div style={{ maxWidth: "1200px", margin: "20px auto", padding: "20px" }}>
-        <div
-          style={{
-            color: "red",
-            padding: "15px",
-            backgroundColor: "#ffebee",
-            borderRadius: "5px",
-            marginBottom: "20px",
-          }}
-        >
-          {error}
-        </div>
-        <button
-          onClick={() => navigate("/")}
-          style={{
-            padding: "10px 20px",
-            fontSize: "16px",
-            backgroundColor: "#757575",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
-          Back to My Posts
-        </button>
-      </div>
-    );
+    return <div className="error">{error}</div>;
   }
 
   return (
-    <div style={{ maxWidth: "1200px", margin: "20px auto", padding: "20px" }}>
+    <div className="container">
       <h2 style={{ marginBottom: "20px" }}>Edit Post</h2>
-
-      <form
-        onSubmit={handleSubmit}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "15px",
-          backgroundColor: "white",
-          padding: "25px",
-          borderRadius: "8px",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-        }}
-      >
-        <div>
-          <label
-            htmlFor="title"
-            style={{
-              display: "block",
-              marginBottom: "5px",
-              fontWeight: "500",
-              color: "#333",
-            }}
-          >
-            Title
-          </label>
+      <form onSubmit={handleSubmit}>
+        <div className="flex-col">
+          <label htmlFor="title">Title</label>
           <input
             id="title"
             type="text"
@@ -147,14 +98,7 @@ function EditPost() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             disabled={saving}
-            style={{
-              width: "100%",
-              padding: "10px",
-              fontSize: "16px",
-              border: "1px solid #ddd",
-              borderRadius: "5px",
-              boxSizing: "border-box",
-            }}
+            className="input-styling"
           />
         </div>
 
@@ -162,7 +106,6 @@ function EditPost() {
           <label
             htmlFor="location"
             style={{
-              display: "block",
               marginBottom: "5px",
               fontWeight: "500",
               color: "#333",
@@ -177,80 +120,29 @@ function EditPost() {
             value={location}
             onChange={(e) => setLocation(e.target.value)}
             disabled={saving}
-            style={{
-              width: "100%",
-              padding: "10px",
-              fontSize: "16px",
-              border: "1px solid #ddd",
-              borderRadius: "5px",
-              boxSizing: "border-box",
-            }}
+            className="input-styling"
           />
         </div>
 
-        <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
-          <button
-            type="submit"
-            disabled={saving}
-            style={{
-              flex: 1,
-              padding: "12px",
-              fontSize: "16px",
-              backgroundColor: saving ? "#ccc" : "#4CAF50",
-              color: "white",
-              border: "none",
-              borderRadius: "5px",
-              cursor: saving ? "not-allowed" : "pointer",
-              fontWeight: "500",
-            }}
-          >
+        <div className="d-flex">
+          <button type="submit" disabled={saving} className="button-styling">
             {saving ? "Saving..." : "Save Changes"}
           </button>
           <button
             type="button"
             onClick={() => navigate("/")}
             disabled={saving}
-            style={{
-              flex: 1,
-              padding: "12px",
-              fontSize: "16px",
-              backgroundColor: "#757575",
-              color: "white",
-              border: "none",
-              borderRadius: "5px",
-              cursor: saving ? "not-allowed" : "pointer",
-              fontWeight: "500",
-            }}
+            className="button-styling"
           >
             Cancel
           </button>
         </div>
       </form>
 
-      {error && (
-        <div
-          style={{
-            color: "red",
-            marginTop: "15px",
-            padding: "12px",
-            backgroundColor: "#ffebee",
-            borderRadius: "5px",
-          }}
-        >
-          {error}
-        </div>
-      )}
+      {error && <div>{error}</div>}
 
       {success && (
-        <div
-          style={{
-            color: "green",
-            marginTop: "15px",
-            padding: "12px",
-            backgroundColor: "#e8f5e9",
-            borderRadius: "5px",
-          }}
-        >
+        <div className="success-message">
           ✓ Post updated successfully! Redirecting...
         </div>
       )}
