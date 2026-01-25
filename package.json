@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/AntoineCrenshaw/FinderKeeper#readme",
   "dependencies": {
+    "@tailwindcss/vite": "^4.1.18",
     "bcrypt": "^6.0.0",
     "config": "^4.1.1",
     "cookie-parser": "^1.4.7",
@@ -31,6 +32,7 @@
     "jsonwebtoken": "^9.0.3",
     "mongodb": "^7.0.0",
     "nanoid": "^5.1.6",
-    "nodemon": "^3.1.11"
+    "nodemon": "^3.1.11",
+    "tailwindcss": "^4.1.18"
   }
 }
