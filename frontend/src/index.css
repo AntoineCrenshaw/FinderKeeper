@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -23,9 +24,14 @@ a:hover {
 }
 
 body {
+  font-family: 'Roboto', sans-serif;
  margin: 0 auto;
  min-height: 100vh;
  box-sizing: border-box;
+}
+
+h1, h2, h3 {
+  font-family: 'Archivo', sans-serif;
 }
 
 h1 {
