@@ -33,3 +33,48 @@ export const deletePost = async (id) => {
   const response = await axios.delete(`${API_URL}/posts/${id}`);
   return response.data;
 };
+
+export const uploadImages = async (files, postId = null) => {
+  const formData = new FormData();
+
+  if (files && files.length > 0) {
+    for (let i = 0; i < files.length; i++) {
+      formData.append("images", files[i]);
+    }
+  }
+
+  console.log("Uploading to:", `${API_URL}/posts/upload`);
+  console.log("Files count:", files ? files.length : 0);
+  if (postId) {
+    console.log("Post ID:", postId);
+  }
+
+  try {
+    const url = postId
+      ? `${API_URL}/posts/upload?postId=${postId}`
+      : `${API_URL}/posts/upload`;
+
+    const response = await axios.post(url, formData);
+
+    console.log("Upload response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Upload axios error:", error);
+    throw error;
+  }
+};
+
+export const userSignIn = async (postData) => {
+  const response = await axios.post(`${API_URL}/users/login/`, postData);
+  return response.data;
+};
+
+export const getAllUsers = async () => {
+  const response = await axios.get(`${API_URL}/users/`);
+  return response;
+};
+
+export const newUser = async (postData) => {
+  const response = await axios.post(`${API_URL}/users/create`, postData);
+  return response;
+};
