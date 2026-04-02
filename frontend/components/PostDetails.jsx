@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getPostById } from "../src/Services/api";
 import { useParams, useNavigate } from "react-router-dom";
+import ImageCarousel from "./ImageCarousel";
 
 function PostDetails() {
   const { id } = useParams();
@@ -29,10 +30,22 @@ function PostDetails() {
   if (error) return <div>Error: {error}</div>;
   if (!post) return <div>No post found</div>;
 
+  // Extract image URLs from post (expects post.images array with image file paths)
+  const imageUrls =
+    post.images && post.images.length > 0
+      ? post.images.map((img) => {
+          // If it's a full URL, use it as is. Otherwise, construct the path
+          return img.startsWith("http") ? img : `/uploads/${img}`;
+        })
+      : [];
+
   return (
     <div>
       <form>
         <h2>Post Details</h2>
+
+        <ImageCarousel images={imageUrls} />
+
         <input type="text" value={post.title} readOnly />
         <input type="text" value={post.location} readOnly />
         <button onClick={() => navigate(`/posts/update/${id}`)}>

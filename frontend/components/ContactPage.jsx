@@ -38,39 +38,6 @@ function ContactPage() {
 
       <div className="contact-container">
         <div className="contact-content">
-          <div className="contact-info-section">
-            <h2 className="section-title">Contact Information</h2>
-            <p className="section-description">
-              Reach out to us through any of these channels, and we'll get back
-              to you as soon as possible.
-            </p>
-
-            <div className="info-cards">
-              <div className="info-card">
-                <div className="info-icon">
-                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                    />
-                  </svg>
-                </div>
-                <div className="info-content">
-                  <h3>Email</h3>
-                  <p>support@marketplace.com</p>
-                  <a
-                    href="mailto:support@marketplace.com"
-                    className="info-link"
-                  >
-                    Send us an email →
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <div className="contact-form-section">
             <h2 className="section-title">Send us a Message</h2>
             <p className="section-description">

@@ -77,7 +77,7 @@
 .header-actions {
   display: flex;
   gap: 12px;
-  align-items: center;
+  align-items: right;
 }
 
 .btn-secondary,
@@ -119,11 +119,8 @@
 
 @media (max-width: 768px) {
   .header-container {
-    padding: 0 16px;
+    padding: 16px;
     height: auto;
-    flex-wrap: wrap;
-    padding-top: 16px;
-    padding-bottom: 16px;
   }
 
   .nav-menu {
@@ -142,8 +139,12 @@
     gap: 8px;
   }
 
-  .btn-secondary,
-  .btn-primary {
+  button a {
+    color: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+      
+  }
+  .si-button,
+  .su-button {
     padding: 8px 16px;
     font-size: 13px;
   }
