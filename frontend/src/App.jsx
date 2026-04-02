@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ListPosts from "../../frontend/components/ListPosts";
 import NewPost from "../../frontend/components/NewPost";
 import PostDetails from "../../frontend/components/PostDetails";
@@ -7,23 +7,45 @@ import ContactPage from "../../frontend/components/ContactPage";
 import AboutPage from "../../frontend/components/AboutUsPage";
 import Header from "../../frontend/components/Header";
 import Footer from "../../frontend/components/Footer";
+import DeleteConfirmation from "../../frontend/components/DeleteConfirmation";
+import SignInForm from "../../frontend/components/SignInForm";
+import RegisterUserForm from "../../frontend/components/RegisterUserForm";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 
 function App() {
+  function showSuccess(message) {
+    toast(message, { type: "success", position: "bottom-right" });
+  }
+
+  function showError(message) {
+    toast(message, { type: "error", position: "bottom-right" });
+  }
+
   return (
     <>
-      <nav>
-        <Header />
-      </nav>
       <BrowserRouter>
+        <ToastContainer />
+        <nav>
+          <Header />
+        </nav>
         <Routes>
           <Route path="/" element={<ListPosts />} />
-          <Route path="/new" element={<NewPost />} />
+          <Route
+            path="/new"
+            element={
+              <NewPost showSuccess={showSuccess} showError={showError} />
+            }
+          />
           <Route path="/:id" element={<PostDetails />} />
           <Route path="/posts/update/:id" element={<EditPost />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/posts/delete/:id" element={<DeleteConfirmation />} />
           <Route path="*" element={<h2>Page Not Found</h2>} />
+          <Route path="/signin" element={<SignInForm />} />
+          <Route path="/signup" element={<RegisterUserForm />} />
         </Routes>
       </BrowserRouter>
       <Footer />
