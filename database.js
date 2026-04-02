@@ -66,6 +66,51 @@ async function saveAuditLog(log) {
   return dbResult;
 }
 
+//users
+
+async function getAllUsers() {
+  const db = await connectToDatabase();
+  const dbResult = await db.collection("Users").find().toArray();
+  console.log(dbResult);
+  return dbResult;
+}
+
+async function getUserById(id) {
+  const db = await connectToDatabase();
+  const user = await db.collection("Users").findOne({ _id: id });
+  return user;
+}
+
+async function getUserByEmail(email) {
+  const db = await connectToDatabase();
+  const user = await db.collection("Users").findOne({ email: email });
+  console.log(user);
+  return user;
+}
+
+async function addUser(user) {
+  const db = await connectToDatabase();
+  const dbResult = await db.collection("Users").insertOne(user);
+  console.log(dbResult);
+  return dbResult;
+}
+
+async function updateUser(updatedUser) {
+  const db = await connectToDatabase();
+  const dbResult = await db
+    .collection("Users")
+    .updateOne({ _id: new ObjectId(updatedUser._id) }, { $set: updateUser });
+  return dbResult;
+}
+
+async function deleteUser(id) {
+  const db = await connectToDatabase();
+  const dbResult = await db
+    .collection("Users")
+    .deleteOne({ _id: new ObjectId(id) });
+  return dbResult;
+}
+
 ping();
 
 export {
@@ -77,4 +122,10 @@ export {
   updatePost,
   deletePost,
   saveAuditLog,
+  getAllUsers,
+  getUserById,
+  getUserByEmail,
+  addUser,
+  updateUser,
+  deleteUser,
 };
