@@ -31,7 +31,8 @@ function ListPosts() {
       console.log("Fetched posts:", data);
       setPosts(data);
     } catch (err) {
-      setError(err.message);
+      console.error("fetchPosts error", err);
+      setError(err.responst?.data?.message || err.message || "Unknown");
     } finally {
       setLoading(false);
     }
