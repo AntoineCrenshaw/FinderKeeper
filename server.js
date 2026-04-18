@@ -15,6 +15,7 @@ const debugServer = debug("app:server");
 import { PostRouter } from "./routes/api/posts.js";
 import { UserRouter } from "./routes/api/users.js";
 
+// Catch-all router to server index.html in the /frontend/dist folder for React Router
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -29,22 +30,24 @@ app.use(
   }),
 );
 
-app.use(cookieParser);
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(express.static("frontend/dist")); // Serve the React.js frontend
 
-//app.use(
-//authMiddleware(process.env.JWT_SECRET, "authToken", {
-//httpOnly: true,
-// maxAge: 1000 * 60 * 60,
-//}),
-//);
+app.use(
+  authMiddleware(process.env.JWT_SECRET, "authToken", {
+    httpOnly: true,
+    maxAge: 1000 * 60 * 60,
+  }),
+);
 
 // Serve static files from uploads directory
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("api/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use("/api/posts", PostRouter);
 app.use("/api/users", UserRouter);
+
 app.get("/", (req, res) => {
   res.send("Welcome to my home page.");
 });
@@ -53,6 +56,10 @@ const port = process.env.PORT || 5000;
 
 app.listen(port, () => {
   debugServer(`Listening on port http://localhost:${port}`);
+});
+
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
 });
 
 //handle server exceptions to keep my server from crashing
