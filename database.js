@@ -62,7 +62,7 @@ async function deletePost(postId) {
 
 async function saveAuditLog(log) {
   const db = await connectToDatabase();
-  const dbResult = await db.collection("AuditLog").instertOne(log);
+  const dbResult = await db.collection("AuditLog").insertOne(log);
   return dbResult;
 }
 
