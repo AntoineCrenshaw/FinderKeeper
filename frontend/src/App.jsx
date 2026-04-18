@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, NavLink } from "react-router-dom";
+import { useState, useEffect } from "react";
 import ListPosts from "../../frontend/components/ListPosts";
 import NewPost from "../../frontend/components/NewPost";
 import PostDetails from "../../frontend/components/PostDetails";
@@ -13,8 +14,11 @@ import RegisterUserForm from "../../frontend/components/RegisterUserForm";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
+import axios from "axios";
 
 function App() {
+  const [auth, setAuth] = useState(null);
+
   function showSuccess(message) {
     toast(message, { type: "success", position: "bottom-right" });
   }
@@ -23,15 +27,48 @@ function App() {
     toast(message, { type: "error", position: "bottom-right" });
   }
 
+  useEffect(() => {
+    const auth = JSON.parse(localStorage.getItem("auth"));
+    if (auth) {
+      setAuth(auth);
+    }
+  }, []);
+
+  const API_URL = import.meta.env.VITE_API_URL || "/api";
+
+  function onLogout() {
+    setAuth(null);
+    axios
+      .post(`${API_URL}/users/logout`, {}, { withCredentials: true })
+      .then((response) => {
+        console.log(response.data);
+        showSuccess("Logged out!");
+        window.location.href = "/signin";
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    localStorage.removeItem("auth");
+  }
+
   return (
     <>
       <BrowserRouter>
         <ToastContainer />
         <nav>
-          <Header />
+          <Header auth={auth} onLogout={onLogout} />
         </nav>
         <Routes>
-          <Route path="/" element={<ListPosts />} />
+          <Route
+            path="/"
+            element={
+              <ListPosts
+                showSuccess={showSuccess}
+                showError={showError}
+                setAuth={setAuth}
+              />
+            }
+          />
           <Route
             path="/new"
             element={
@@ -43,9 +80,18 @@ function App() {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/posts/delete/:id" element={<DeleteConfirmation />} />
-          <Route path="*" element={<h2>Page Not Found</h2>} />
-          <Route path="/signin" element={<SignInForm />} />
+          <Route
+            path="/signin"
+            element={
+              <SignInForm
+                showSuccess={showSuccess}
+                showError={showError}
+                setAuth={setAuth}
+              />
+            }
+          />
           <Route path="/signup" element={<RegisterUserForm />} />
+          <Route path="*" element={<h2>Page Not Found</h2>} />
         </Routes>
       </BrowserRouter>
       <Footer />
