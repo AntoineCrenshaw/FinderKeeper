@@ -3,13 +3,12 @@ import "../../frontend/components/styling/SignInForm.css";
 import { useNavigate } from "react-router-dom";
 import { userSignIn } from "../src/Services/api";
 import "react-toastify/dist/ReactToastify.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
-function SignInForm({ showSuccess, showError }) {
+function SignInForm({ showSuccess, showError, setAuth }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
 
@@ -40,23 +39,22 @@ function SignInForm({ showSuccess, showError }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     // Check for empty fields
-    if (!email.trim() || !password.trim()) {
-      setError("Both email and password are required");
-      return;
-    }
     try {
-      setLoading(true);
-      setError(null);
-      const data = await userSignIn({ email, password });
-      console.log("User signed in: ", data);
+      const response = await userSignIn(
+        { email, password },
+        { withCredentials: true },
+      );
+      console.log("User signed in: ", response);
+
+      showSuccess(response.message || "Successfully logged in!");
+      setAuth(response);
+      localStorage.setItem("auth", JSON.stringify(response)); // Save auth to local storage
       navigate("/");
-      setSuccess("Successfully logged in!");
-      setEmail("");
-      setPassword("");
     } catch (error) {
-      setError(error.response?.data?.message || "Failed to sign in.");
-    } finally {
-      setLoading(false);
+      const message =
+        error.response?.data?.message || "Invalid username or password";
+      showError(message);
+      console.log(message);
     }
   };
   return (
@@ -74,26 +72,40 @@ function SignInForm({ showSuccess, showError }) {
           type="email"
           name="email"
           id="email"
+          aria-describedby="email-addon"
           placeholder="E-mail"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          disabled={loading}
         />
         <div className="invalid-feedback">
           Please enter a valid email address.
         </div>
+        <span className="input-grout-text" id="password-addon">
+          <i className="bi bi-lock-fill input-icon"></i>
+        </span>
         <input
           required
+          minLength={5}
           className="input"
-          type="password"
+          type={showPassword ? "text" : "password"}
           name="password"
           id="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          disabled={loading}
         />
-        <div className="invalid-feedback">Please enter a valid password.</div>
+        <span
+          className="input-group-text"
+          onClick={() => setShowPassword(!showPassword)}
+        >
+          <i
+            className={`input-icon bi ${showPassword ? "bi-eye-slash-fill" : "bi-eye-fill"}`}
+          ></i>
+        </span>
+
+        <div className="invalid-feedback">
+          Please enter a password at least 5 characters long.
+        </div>
         <span className="forgot-password">
           <a href="#">Forgot Password ?</a>
         </span>
@@ -102,11 +114,9 @@ function SignInForm({ showSuccess, showError }) {
         </span>
 
         <button className="login-button" type="submit" onClick={handleSubmit}>
-          {loading ? "Signing in..." : "Sign In"}
+          Sign In
         </button>
       </form>
-      {error && <div style={{ color: "red" }}>{error}</div>}
-      {success && <div style={{ color: "green" }}>{success}</div>}
     </div>
   );
 }
