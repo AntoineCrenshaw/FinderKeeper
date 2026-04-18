@@ -19,6 +19,9 @@ export default defineConfig({
       "/uploads": {
         target: "http://localhost:5000/uploads",
       },
+      build: {
+        sourcemap: true,
+      },
     },
   },
 });
