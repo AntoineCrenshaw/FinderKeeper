@@ -3,7 +3,7 @@ import { getPosts, deletePost } from "../../frontend/src/Services/api";
 import "../../frontend/components/styling/ListPost.css";
 import DeleteConfirmation from "../../frontend/components/DeleteConfirmation";
 
-function ListPosts() {
+function ListPosts({ showSuccess }) {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -30,9 +30,10 @@ function ListPosts() {
       const data = await getPosts();
       console.log("Fetched posts:", data);
       setPosts(data);
+      //showSuccess("Posts loaded successfully");
     } catch (err) {
       console.error("fetchPosts error", err);
-      setError(err.responst?.data?.message || err.message || "Unknown");
+      setError(err.response?.data?.message || err.message || "Unknown");
     } finally {
       setLoading(false);
     }
@@ -42,6 +43,7 @@ function ListPosts() {
     try {
       await deletePost(id);
       setPosts(posts.filter((post) => post._id !== id));
+      //showSuccess("Post deleted successfully!");
       closeDeleteModal();
     } catch (err) {
       setError(err.message);
@@ -61,7 +63,7 @@ function ListPosts() {
           // Get the first image or use a placeholder
           const imageUrl =
             post.images && post.images.length > 0
-              ? `/uploads/${post.images[0]}`
+              ? `${import.meta.env.VITE_API_URL}/uploads/${post.images[0]}`
               : "https://unsplash.it/400/300?random";
 
           return (
