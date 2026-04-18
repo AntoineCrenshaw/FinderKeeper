@@ -57,6 +57,7 @@ router.use(express.urlencoded({ extended: false }));
 //list all posts
 router.get("/", async (req, res) => {
   debugPostRouter("post route hit");
+  console.log("GET /api/posts invoked!!");
   GetAllPosts()
     .then((posts) => {
       res.status(200).json(posts);
@@ -123,7 +124,9 @@ router.post("/upload", (req, res, next) => {
         try {
           // Only update the images and lastUpdated fields
           await updatePost(postId, {
-            images: req.files.map((f) => f.filename),
+            images: req.files.map(
+              (f) => `${import.meta.env.VITE_API_URL}/uploads/${f.filename}`,
+            ),
             lastUpdated: new Date(),
           });
           debugPostRouter(
