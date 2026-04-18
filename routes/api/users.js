@@ -23,9 +23,9 @@ import { getAllUsers, getUserByEmail, addUser } from "../../database.js";
 router.use(express.urlencoded({ extended: false }));
 
 async function issueAuthToken(user) {
-  const roles = await fetchRoles(user, (role) => findRoleByName(role));
+  //const roles = await fetchRoles(user, (role) => findRoleByName(role));
 
-  const permissions = mergePermissions(user, roles);
+  //const permissions = mergePermissions(user, roles);
 
   const token = jwt.sign(
     { _id: user._id, email: user.email },
@@ -47,34 +47,12 @@ async function issueAuthCookie(res, token) {
 
 //get all users
 router.get("/", async (req, res) => {
-  debugUserRouter("user route hit");
+  debugUserRouter("Get All Users Route Hit");
   try {
     const users = await getAllUsers();
     res.status(200).json(users);
   } catch (err) {
     res.status(500).send(err);
-  }
-});
-
-//login existing user
-router.post("/login", validBody(userSchema), async (req, res) => {
-  debugUserRouter("Login route hit");
-  const user = req.body;
-  console.log("Log in info:", user);
-
-  try {
-    const existingUser = await getUserByEmail(user.email);
-    if (!existingUser) {
-      return res.status(404).json({ message: "Invalid email or password" });
-    }
-    // TODO: Check password with bcrypt
-    res.status(200).json({
-      message: "User logged in successfully",
-      email: existingUser.email,
-    });
-  } catch (e) {
-    debugUserRouter(e);
-    res.status(500).json({ message: "Error logging in user" });
   }
 });
 
@@ -97,14 +75,15 @@ router.post("/create", async (req, res) => {
     return res.status(400).json({ message: "Email already exsists" });
   }
 
-  //user.password = await bcrypt.hash(user.password, 10);
+  user.password = await bcrypt.hash(user.password, 10);
   const newUser = await addUser(user);
-  showSuccess(`New user successfully created!`);
   console.log("New User Created", newUser);
 
   if (newUser.acknowledged) {
+    //Generate JWT
     const jwtToken = await issueAuthToken(user);
 
+    //Create Auth Cookie
     await issueAuthCookie(res, jwtToken);
     res
       .status(201)
@@ -114,6 +93,42 @@ router.post("/create", async (req, res) => {
       message: "Error registering user, incorrect username or password",
     });
   }
+});
+
+//login existing user
+router.post("/login", validBody(userSchema), async (req, res) => {
+  debugUserRouter("Login route hit");
+  const user = req.body;
+  console.log("Log in info:", user);
+
+  try {
+    const existingUser = await getUserByEmail(user.email);
+    if (!existingUser) {
+      return res.status(404).json({ message: "Invalid email or password" });
+    }
+    const passwordMatch = await bcrypt.compare(
+      user.password,
+      existingUser.password,
+    );
+    if (!passwordMatch) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+    const jwtToken = await issueAuthToken(existingUser);
+    await issueAuthCookie(res, jwtToken);
+    res.status(200).json({
+      message: "User logged in successfully",
+      email: existingUser.email,
+      token: jwtToken,
+    });
+  } catch (e) {
+    debugUserRouter(e);
+    res.status(500).json({ message: "Error logging in user" });
+  }
+});
+
+router.post("/logout", (req, res) => {
+  res.clearCookie("authToken");
+  res.status(200).json({ message: "User logged out successfully" });
 });
 
 export { router as UserRouter };
