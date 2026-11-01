@@ -6,8 +6,6 @@ dotenv.config();
 import debug from "debug";
 const debugIndex = debug("app:Index");
 
-/* import { authMiddleware } from '@merlin4/express-auth'; */
-
 import { PostRouter } from "./routes/api/posts.js";
 import cookieParser from "cookie-parser";
 
@@ -26,11 +24,6 @@ app.use(express.static("frontend/dist")); // Serve the React.js frontend
 app.use(cors());
 
 app.use(cookieParser());
-
-// app.use(authMiddleware(process.env.JWT_SECRET, 'authToken',{
-//   httpOnly:true,
-//   maxAge: 1000 * 60 * 60
-// }));
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
