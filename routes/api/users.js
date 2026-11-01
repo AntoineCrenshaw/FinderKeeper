@@ -30,7 +30,7 @@ async function issueAuthToken(user) {
   const token = jwt.sign(
     { _id: user._id, email: user.email },
     process.env.JWT_SECRET,
-    { expiresIn: "1h" },
+    { expiresIn: "24h" },
   );
   return token;
 }
@@ -38,7 +38,7 @@ async function issueAuthToken(user) {
 async function issueAuthCookie(res, token) {
   const cookieOptions = {
     httpOnly: true,
-    maxAge: 1000 * 60 * 60,
+    maxAge: 1000 * 60 * 60 * 60,
     sameSite: "strict",
     secure: true,
   };
