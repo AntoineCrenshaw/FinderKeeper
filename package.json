@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
-    "dev-start": "nodemon --exitcrash --delay 2 -r dotenv/config server.js"
+    "dev-start": "nodemon --exitcrash --delay 2 -r dotenv/config server.js",
+    "test": "npm run test"
   },
   "repository": {
     "type": "git",
