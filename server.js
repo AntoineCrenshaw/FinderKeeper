@@ -54,12 +54,12 @@ app.get("/", (req, res) => {
 
 const port = process.env.PORT || 5000;
 
-app.listen(port, () => {
-  debugServer(`Listening on port http://localhost:${port}`);
-});
-
 app.get("*", (req, res) => {
   res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
+});
+
+app.listen(port, () => {
+  debugServer(`Listening on port http://localhost:${port}`);
 });
 
 //handle server exceptions to keep my server from crashing
