@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev-start": "nodemon --exitcrash --delay 2 -r dotenv/config server.js",
-    "test": "npm run test"
+    "test": "npm run test",
+    "dev-build": "concurrently --raw \"npm run build:auto --prefix frontend\" \"npm run dev-start\" "
   },
   "repository": {
     "type": "git",
@@ -24,6 +25,7 @@
     "@merlin4/express-auth": "^0.0.5",
     "@tailwindcss/vite": "^4.1.18",
     "bcrypt": "^6.0.0",
+    "concurrently": "^10.0.6",
     "config": "^4.4.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
