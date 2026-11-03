@@ -30,7 +30,7 @@ form .input {
   border-radius: 20px;
   margin-top: 15px;
   box-shadow: #cff0ff 0px 10px 10px -5px;
-  border-inl.ine: 2px solid transparent;
+  border-inline: 2px solid transparent;
 }
 
 .form .input::-moz-placeholder {
