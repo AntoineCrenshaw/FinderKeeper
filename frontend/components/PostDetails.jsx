@@ -14,8 +14,8 @@ function PostDetails() {
     const fetchPost = async () => {
       try {
         setLoading(true);
-        const data = await getPostById(id);
-        setPost(data);
+        const response = await getPostById(id);
+        setPost(response.data);
       } catch (err) {
         setError(err?.message || "Failed to fetch post details");
       } finally {
