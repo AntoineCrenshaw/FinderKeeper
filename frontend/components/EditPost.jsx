@@ -4,6 +4,7 @@ import {
   updatePost,
   uploadImages,
 } from "../../frontend/src/Services/api";
+import api from "../src/api";
 import { useParams, useNavigate } from "react-router-dom";
 import "../../frontend/components/styling/EditPost.css";
 
@@ -25,11 +26,14 @@ function EditPost() {
   const [initialImages, setInitialImages] = useState([]);
 
   useEffect(() => {
-    const fetchPost = async () => {
+  fetchPostById();
+}, []);
+
+    const fetchPostById = async () => {
       try {
         setLoading(true);
         setError(null);
-        const post = await getPostById(id);
+        const post = await api.get(`/api/posts/${id}`)
 
         // Populate form with existing data
         const existingImages = post.images || [];
@@ -39,6 +43,7 @@ function EditPost() {
         setZip(post.zip || "");
         setCategory(post.category || "");
         setDescription(post.description || "");
+        console.log(post.data);
       } catch (err) {
         console.error("Error fetching post:", err);
         setError(err?.response?.data?.message || "Failed to load post");
@@ -46,11 +51,10 @@ function EditPost() {
         setLoading(false);
       }
     };
-
-    if (id) {
-      fetchPost();
-    }
-  }, [id]);
+  
+    console.log(`ID state: ${id}`)
+  
+  
 
   const handleImageSelect = (e) => {
     const selectedFiles = e.target.files;
