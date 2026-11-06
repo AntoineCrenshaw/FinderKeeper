@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
-import { getPosts, deletePost } from "../../frontend/src/Services/api";
+import api from "../src/api";
+import { deletePost } from "../../frontend/src/Services/api";
 import "../../frontend/components/styling/ListPost.css";
 import DeleteConfirmation from "../../frontend/components/DeleteConfirmation";
 
@@ -28,12 +28,11 @@ function ListPosts({ showSuccess }) {
   const fetchPosts = async () => {
     try {
       setLoading(true);
-      const data = await axios.get("http://localhost:5173/posts", {
-        withCredentials: true,
-      });
-      console.log("Fetched posts:", data);
-      setPosts(data.data.posts);
-      //showSuccess("Posts loaded successfully");
+      const response = await api.get("/api/posts",
+      );
+      console.log("Fetched posts:", response.data);
+      setPosts(response.data);
+      showSuccess("Posts loaded successfully");
     } catch (err) {
       console.error("fetchPosts error", err);
       setError(err.response?.data?.message || err.message || "Unknown");
@@ -42,11 +41,17 @@ function ListPosts({ showSuccess }) {
     }
   };
 
+  console.log("Posts state:", posts);
+  console.log("Is posts an array?", Array.isArray(posts));
+  console.log("Number of posts:", posts.length);
+
   const handleDelete = async (id) => {
     try {
       await deletePost(id);
-      setPosts(posts.filter((post) => post._id !== id));
-      //showSuccess("Post deleted successfully!");
+      setPosts((prevPosts) =>
+        prevPosts.filter((post) => post._id !== id)
+      );
+      showSuccess("Post deleted successfully!");
       closeDeleteModal();
     } catch (err) {
       setError(err.message);
