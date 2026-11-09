@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 import {
-  getPostById,
-  updatePost,
   uploadImages,
 } from "../../frontend/src/Services/api";
 import api from "../src/api";
@@ -35,15 +33,13 @@ function EditPost() {
         setError(null);
         const post = await api.get(`/api/posts/${id}`)
 
-        // Populate form with existing data
         const existingImages = post.images || [];
         setInitialImages(existingImages);
-        setTitle(post.title || "");
-        setLocation(post.location || "");
-        setZip(post.zip || "");
-        setCategory(post.category || "");
-        setDescription(post.description || "");
-        console.log(post.data);
+        setTitle(post.data.title || "");
+        setLocation(post.data.location || "");
+        setZip(post.data.zip || "");
+        setCategory(post.data.category || "");
+        setDescription(post.data.description || "");
       } catch (err) {
         console.error("Error fetching post:", err);
         setError(err?.response?.data?.message || "Failed to load post");
@@ -51,9 +47,6 @@ function EditPost() {
         setLoading(false);
       }
     };
-  
-    console.log(`ID state: ${id}`)
-  
   
 
   const handleImageSelect = (e) => {
@@ -105,7 +98,6 @@ function EditPost() {
     e.preventDefault();
 
     console.log("Submitting update for post ID:", id);
-    console.log("Data:", { title, location });
 
     if (!title.trim() || !location.trim()) {
       setError("Both title and location are required");
@@ -132,7 +124,7 @@ function EditPost() {
       setError(null);
       setSuccess(false);
 
-      const result = await updatePost(id, {
+      const result = await api.get(`/api/posts/update/${id}` , {
         title,
         location,
         zip,
