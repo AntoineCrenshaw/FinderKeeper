@@ -21,10 +21,8 @@ export const createPost = async (postData) => {
 };
 
 export const updatePost = async (id, postData) => {
-  console.log("Post Update received:", { id, postData });
   console.log("Building URL with id:", id);
   const url = `${API_URL}/posts/update/${id}`; // Build URL separately
-  console.log("Full URL:", url); // Log the complete URL
   const response = await axios.patch(url, postData);
   return response.data;
 };
