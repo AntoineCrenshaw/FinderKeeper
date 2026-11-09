@@ -1,12 +1,10 @@
 import { useState, useEffect } from "react";
 import api from "../src/api";
-import { deletePost } from "../../frontend/src/Services/api";
 import "../../frontend/components/styling/ListPost.css";
 import DeleteConfirmation from "../../frontend/components/DeleteConfirmation";
 
 function ListPosts({ showSuccess }) {
   const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [postToDelete, setPostToDelete] = useState(null);
@@ -27,7 +25,6 @@ function ListPosts({ showSuccess }) {
 
   const fetchPosts = async () => {
     try {
-      setLoading(true);
       const response = await api.get("/api/posts",
       );
       console.log("Fetched posts:", response.data);
@@ -36,18 +33,12 @@ function ListPosts({ showSuccess }) {
     } catch (err) {
       console.error("fetchPosts error", err);
       setError(err.response?.data?.message || err.message || "Unknown");
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
-
-  console.log("Posts state:", posts);
-  console.log("Is posts an array?", Array.isArray(posts));
-  console.log("Number of posts:", posts.length);
 
   const handleDelete = async (id) => {
     try {
-      await deletePost(id);
+      await api.delete(`https://localhost:5000/api/posts/${id}`);
       setPosts((prevPosts) =>
         prevPosts.filter((post) => post._id !== id)
       );
@@ -58,7 +49,6 @@ function ListPosts({ showSuccess }) {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
